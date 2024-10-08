@@ -6,6 +6,7 @@ let yRes = 1000;
 
 let numCols;
 let colSpacing;
+let lecturer = true;
 
 function preload() {
   var url =
@@ -19,44 +20,59 @@ function setup() {
 
   numCols = 2025 - yearStart;
   colSpacing = (width - margin * 2) / numCols;
-  noLoop();
-  // print (table.getRowCount() + ' total rows');
-  //print (table.getColumnCount() + ' total columns');
+
+  let button = createButton("Display Lecturer PCR");
+  button.position(0, 100);
+
+  // Call repaint() when the button is pressed.
+  button.mousePressed(function () {
+    if (lecturer) {
+      lecturer = false;
+    } else {
+      lecturer = true;
+    }
+  });
 }
 
 function draw() {
   background(255);
   drawGrid();
-  let ind = 0;
-  let xp, yp; // stores of previous X and Y for plotting lines
-  for (let yr = yearStart; yr < 2025; yr++) {
-    let s = str(yr);
-    let data = table.getColumn(s);
-    let pcr = data[0]; //per course rate
+  drawLecturer(lecturer);
+}
 
-    if (pcr != "" && pcr != undefined) {
-      // console.log(int(pcr));
+function drawLecturer(on) {
+  if (on) {
+    let ind = 0;
+    let xp, yp; // stores of previous X and Y for plotting lines
+    for (let yr = yearStart; yr < 2025; yr++) {
+      let s = str(yr);
+      let data = table.getColumn(s);
+      let pcr = data[0]; //per course rate
 
-      pcr = convertCSVPCR(pcr);
+      if (pcr != "" && pcr != undefined) {
+        // console.log(int(pcr));
 
-      let y = map(int(pcr), moneyMax, moneyMin, margin, height - margin);
-      let x = ind * colSpacing + margin;
+        pcr = convertCSVPCR(pcr);
 
-      textSize(24);
-      text(pcr, x, y);
-      if (xp != null) {
-        push();
+        let y = map(int(pcr), moneyMax, moneyMin, margin, height - margin);
+        let x = ind * colSpacing + margin;
 
-        strokeWeight(2);
-        stroke("blue");
-        line(xp, yp, x, y);
-        pop();
+        textSize(24);
+        text(pcr, x, y);
+        if (xp != null) {
+          push();
+
+          strokeWeight(2);
+          stroke("blue");
+          line(xp, yp, x, y);
+          pop();
+        }
+
+        xp = x;
+        yp = y;
       }
-
-      xp = x;
-      yp = y;
+      ind++;
     }
-    ind++;
   }
 }
 
@@ -75,6 +91,7 @@ function drawGrid() {
   for (let x = margin; x < width - margin; x += colSpacing) {
     stroke(0, 50);
     line(x, margin, x, height - margin);
+    textSize(12);
     text(yr, x - 5, height - margin + textSize());
     yr++;
   }
@@ -84,8 +101,12 @@ function drawGrid() {
   let rowSpacing = (height - margin * 2) / numRows;
   console.log(rowSpacing);
   let money = moneyMax;
+  textSize(12);
   for (let y = margin; y < height - margin; y += rowSpacing) {
+    stroke(0);
     text("$" + money, margin - 30, y);
+    stroke(0, 50);
+    line(margin, y, width - margin, y);
     money -= yRes;
     // console.log(money);
   }
