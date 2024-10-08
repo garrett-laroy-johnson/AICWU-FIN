@@ -22,7 +22,7 @@ function setup() {
   colSpacing = (width - margin * 2) / numCols;
 
   let button = createButton("Display Lecturer PCR");
-  button.position(0, 100);
+  button.position(margin, margin / 2);
 
   // Call repaint() when the button is pressed.
   button.mousePressed(function () {
